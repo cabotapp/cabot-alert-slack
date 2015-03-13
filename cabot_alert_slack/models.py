@@ -49,8 +49,8 @@ class SlackAlert(AlertPlugin):
 
     def _send_slack_alert(self, message, color='green', sender='Cabot'):
 
-        channel = '#' + env.get('SlACK_ALERT_CHANNEL')
-        url = env.get('SlACK_WEBHOOK_URL')
+        channel = '#' + env.get('SLACK_ALERT_CHANNEL')
+        url = env.get('SLACK_WEBHOOK_URL')
         icon_url = env.get('SLACK_ICON_URL')
 
         # TODO: handle color
