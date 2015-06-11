@@ -30,11 +30,11 @@ class SlackAlert(AlertPlugin):
             if service.old_overall_status in (service.ERROR_STATUS, service.ERROR_STATUS):
                 alert = False  # Don't alert repeatedly for ERROR
         if service.overall_status == service.PASSING_STATUS:
-            color = 'green'
+            color = 'good'
             if service.old_overall_status == service.WARNING_STATUS:
                 alert = False  # Don't alert for recovery from WARNING status
         else:
-            color = 'red'
+            color = 'danger'
 
         c = Context({
             'service': service,
@@ -45,9 +45,9 @@ class SlackAlert(AlertPlugin):
             'jenkins_api': settings.JENKINS_API,
         })
         message = Template(slack_template).render(c)
-        self._send_slack_alert(message, color=color, sender='Cabot/%s' % service.name)
+        self._send_slack_alert(message, service, color=color, sender='Cabot')
 
-    def _send_slack_alert(self, message, color='green', sender='Cabot'):
+    def _send_slack_alert(self, message, service, color='green', sender='Cabot'):
 
         channel = '#' + env.get('SLACK_ALERT_CHANNEL')
         url = env.get('SLACK_WEBHOOK_URL')
@@ -57,8 +57,22 @@ class SlackAlert(AlertPlugin):
         resp = requests.post(url, data=json.dumps({
             'channel': channel,
             'username': sender[:15],
-            'text': message,
-            'icon_url': icon_url
+            'icon_url': icon_url,
+            'attachments': [{
+                'title': service.name,
+                'text': message,
+                'color': color,
+                'fields': [{
+                    'title': 'status',
+                    'value': service.overall_status,
+                    'short': 'false'
+                    }, {
+                    'title': 'old status',
+                    'value': service.old_overall_status,
+                    'short': 'false'
+                    }
+                ]
+            }]
         }))
 
 class SlackAlertUserData(AlertPluginUserData):
