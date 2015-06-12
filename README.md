@@ -23,7 +23,7 @@ or
 Edit `conf/*.env`.
 
 ```
-CABOT_PLUGINS_ENABLED=cabot_alert_slack==0.5
+CABOT_PLUGINS_ENABLED=cabot_alert_slack==0.6
 ...
 SLACK_ALERT_CHANNEL=channel_name_without_hash
 SLACK_WEBHOOK_URL=url_of_your_webhook_integration_from_slack
