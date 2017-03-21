@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='cabot-alert-slack',
-      version='0.6',
+      version='0.7.0',
       description='A slack alert plugin for Cabot by Arachnys',
       author='Luka Blaskovic',
       author_email='lblasc@znode.net',

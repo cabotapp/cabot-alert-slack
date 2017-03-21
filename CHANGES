@@ -1,0 +1,4 @@
+Version 0.7.0
+-------------
+
+* Add migrations to work with Cabot >=0.7
