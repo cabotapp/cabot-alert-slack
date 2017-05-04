@@ -70,6 +70,15 @@ class SlackAlert(AlertPlugin):
         url = env.get('SLACK_WEBHOOK_URL')
         icon_url = env.get('SLACK_ICON_URL')
 
+        actions = []
+        if service.overall_status != service.PASSING_STATUS:
+            actions.append({
+                "name": "acknowledge",
+                "text": "Acknowledge",
+                "type": "button",
+                "value": "acknowledge",
+            })
+
         # TODO: handle color
         resp = requests.post(url, data=json.dumps({
             'channel': channel,
@@ -89,7 +98,9 @@ class SlackAlert(AlertPlugin):
                     'value': service.old_overall_status,
                     'short': 'false'
                     }
-                ]
+                ],
+                'callback_id': "acknowledge_{}".format(service.id),
+                'actions': actions
             }]
         }))
 
