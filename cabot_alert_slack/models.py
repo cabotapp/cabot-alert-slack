@@ -10,7 +10,24 @@ from django.template import Context, Template
 import requests
 import json
 
-slack_template = "Service {{ service.name }} {% if service.overall_status == service.PASSING_STATUS %}is back to normal{% else %}reporting {{ service.overall_status }} status{% endif %}: {{ scheme }}://{{ host }}{% url 'service' pk=service.id %}. {% if service.overall_status != service.PASSING_STATUS %}Checks failing: {% for check in service.all_failing_checks %}{% if check.check_category == 'Jenkins check' %}{% if check.last_result.error %} {{ check.name }} ({{ check.last_result.error|safe }}) {{jenkins_api}}job/{{ check.name }}/{{ check.last_result.job_number }}/console{% else %} {{ check.name }} {{jenkins_api}}/job/{{ check.name }}/{{check.last_result.job_number}}/console {% endif %}{% else %} {{ check.name }} {% if check.last_result.error %} ({{ check.last_result.error|safe }}){% endif %}{% endif %}{% endfor %}{% endif %}{% if alert %}{% for alias in users %} @{{ alias }}{% endfor %}{% endif %}"
+slack_template = """
+Service {{ service.name }} {% if service.overall_status == service.PASSING_STATUS %}*is back to normal*{% else %}reporting *{{ service.overall_status }}* status{% endif %}: {{ scheme }}://{{ host }}{% url 'service' pk=service.id %} \
+{% if alert %}{% for alias in users %} @{{ alias }}{% endfor %}{% endif %}\
+
+{% if service.overall_status != service.PASSING_STATUS %}Checks failing:\
+{% for check in service.all_failing_checks %}\
+    {% if check.check_category == 'Jenkins check' %}\
+        {% if check.last_result.error %}\
+            - {{ check.name }} ({{ check.last_result.error|safe }}) {{jenkins_api}}job/{{ check.name }}/{{ check.last_result.job_number }}/console
+        {% else %}\
+            - {{ check.name }} {{jenkins_api}}/job/{{ check.name }}/{{check.last_result.job_number}}/console
+        {% endif %}\
+    {% else %}
+        - {{ check.name }} {% if check.last_result.error %} ({{ check.last_result.error|safe }}){% endif %}
+    {% endif %}\
+{% endfor %}\
+{% endif %}\
+"""
 
 # This provides the slack alias for each user. Each object corresponds to a User
 class SlackAlert(AlertPlugin):
@@ -47,7 +64,7 @@ class SlackAlert(AlertPlugin):
         message = Template(slack_template).render(c)
         self._send_slack_alert(message, service, color=color, sender='Cabot')
 
-    def _send_slack_alert(self, message, service, color='green', sender='Cabot'):
+    def _send_slack_alert(self, message, service, color='good', sender='Cabot'):
 
         channel = '#' + env.get('SLACK_ALERT_CHANNEL')
         url = env.get('SLACK_WEBHOOK_URL')
@@ -62,6 +79,7 @@ class SlackAlert(AlertPlugin):
                 'title': service.name,
                 'text': message,
                 'color': color,
+                'mrkdwn_in': ["text"],
                 'fields': [{
                     'title': 'status',
                     'value': service.overall_status,
