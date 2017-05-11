@@ -1,5 +1,5 @@
-master
-------
+Version 0.8.1
+-------------
 
 * Fix slack @mentions not linking correctly
   - Note: It still doesn't work with app webhooks, potentially due to a slack bug
