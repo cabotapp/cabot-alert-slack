@@ -84,6 +84,7 @@ class SlackAlert(AlertPlugin):
             'channel': channel,
             'username': sender[:15],
             'icon_url': icon_url,
+            'link_names': 1,
             'attachments': [{
                 'title': service.name,
                 'text': message,

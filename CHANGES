@@ -1,6 +1,8 @@
 master
 ------
 
+* Fix slack @mentions not linking correctly
+  - Note: It still doesn't work with app webhooks, potentially due to a slack bug
 * Only show slack buttons if SLACK_INTERACTIVE_MESSAGES is set to true
   - Some custom config is required on slacks end, so doesn't make sense to show it by default
 
