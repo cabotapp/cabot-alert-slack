@@ -1,3 +1,10 @@
+master
+------
+
+* Only show slack buttons if SLACK_INTERACTIVE_MESSAGES is set to true
+  - Some custom config is required on slacks end, so doesn't make sense to show it by default
+
+
 Version 0.8.0
 -------------
 

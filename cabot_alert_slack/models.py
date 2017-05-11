@@ -71,7 +71,7 @@ class SlackAlert(AlertPlugin):
         icon_url = env.get('SLACK_ICON_URL')
 
         actions = []
-        if service.overall_status != service.PASSING_STATUS:
+        if env.get('SLACK_INTERACTIVE_MESSAGES', False) and service.overall_status != service.PASSING_STATUS:
             actions.append({
                 "name": "acknowledge",
                 "text": "Acknowledge",
