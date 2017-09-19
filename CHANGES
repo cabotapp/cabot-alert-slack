@@ -1,6 +1,8 @@
 master
 ------
 
+* Fix `short` attachment property by using boolean instead of string
+   - This allows to use the plugin with Mattermost
 * Fix link to Jenkins jobs with multiple Jenkins backends
    - This was added in cabot 0.11.0
 
