@@ -18,9 +18,9 @@ Service {{ service.name }} {% if service.overall_status == service.PASSING_STATU
 {% for check in service.all_failing_checks %}\
     {% if check.check_category == 'Jenkins check' %}\
         {% if check.last_result.error %}\
-            - {{ check.name }} ({{ check.last_result.error|safe }}) {{jenkins_api}}job/{{ check.name }}/{{ check.last_result.job_number }}/console
+            - {{ check.name }} ({{ check.last_result.error|safe }}) {{check.jenkins_config.jenkins_api}}job/{{ check.name }}/{{ check.last_result.job_number }}/console
         {% else %}\
-            - {{ check.name }} {{jenkins_api}}/job/{{ check.name }}/{{check.last_result.job_number}}/console
+            - {{ check.name }} {{check.jenkins_config.jenkins_api}}/job/{{ check.name }}/{{check.last_result.job_number}}/console
         {% endif %}\
     {% else %}
         - {{ check.name }} {% if check.last_result.error %} ({{ check.last_result.error|safe }}){% endif %}
@@ -59,7 +59,6 @@ class SlackAlert(AlertPlugin):
             'host': settings.WWW_HTTP_HOST,
             'scheme': settings.WWW_SCHEME,
             'alert': alert,
-            'jenkins_api': settings.JENKINS_API,
         })
         message = Template(slack_template).render(c)
         self._send_slack_alert(message, service, color=color, sender='Cabot')
