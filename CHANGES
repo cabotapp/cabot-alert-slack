@@ -1,5 +1,5 @@
-master
-------
+Version 0.8.2
+-------------
 
 * Fix `short` attachment property by using boolean instead of string
    - This allows to use the plugin with Mattermost
