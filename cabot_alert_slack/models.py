@@ -108,3 +108,7 @@ class SlackAlertUserData(AlertPluginUserData):
     name = "Slack Plugin"
     slack_alias = models.CharField(max_length=50, blank=True)
 
+    def serialize(self):
+        return {
+            "slack_alias": self.slack_alias
+        }
